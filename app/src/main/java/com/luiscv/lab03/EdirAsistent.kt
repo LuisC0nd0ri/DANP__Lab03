@@ -13,16 +13,19 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun editAsistent(
-    btnCancel : (String) -> Unit,
-    btnSave: (String) -> Unit  //para pasar los datos
+    btnCancel: (String) -> Unit,
+    btnSave: (Int) -> Unit,
+    asistenteId: Int
 ){
 
+    //var asistente: Asistente =
     var tfnombres by remember { mutableStateOf("Luis Condori") }
     var tffechaInscripcion by remember { mutableStateOf("01/06/2023") }
     var tftipoSangre by remember { mutableStateOf("B+") }
     var tftelefono by remember { mutableStateOf("987654321") }
     var tfcorreo by remember { mutableStateOf("lcondorivill@unsa.edu.pe") }
     var tfmontoPagado by remember { mutableStateOf("2000.0") }
+
 
     Column(
         modifier = Modifier.padding(start = 20.dp, end = 20.dp)
@@ -46,7 +49,7 @@ fun editAsistent(
         TextField(value = tfmontoPagado, onValueChange = { tfmontoPagado = it }, modifier = Modifier.fillMaxWidth())
 
         Button(
-            onClick = { btnSave("") },
+            onClick = { btnSave(asistenteId) },
             modifier = Modifier.padding(top = 10.dp).fillMaxWidth(),
         ) {
             Text(text = "Guardar")

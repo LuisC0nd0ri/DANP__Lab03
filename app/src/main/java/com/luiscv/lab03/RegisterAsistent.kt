@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun registerAsistent(
-    btnCancel : (String) -> Unit,
-    btnSave: (String) -> Unit  //para pasar los datos
+    btnCancel: (String) -> Unit,
+    btnSave: (String, String, String, String, String, String) -> Unit  //para pasar los datos
 ) {
 
 
@@ -48,7 +48,7 @@ fun registerAsistent(
         TextField(value = tfmontoPagado, onValueChange = { tfmontoPagado = it }, modifier = Modifier.fillMaxWidth())
 
         Button(
-            onClick = { btnSave("") },
+            onClick = { btnSave(tfnombres, tffechaInscripcion, tftipoSangre, tftelefono, tfcorreo, tfmontoPagado) },
             modifier = Modifier.padding(top = 10.dp).fillMaxWidth(),
         ) {
             Text(text = "Registrar")

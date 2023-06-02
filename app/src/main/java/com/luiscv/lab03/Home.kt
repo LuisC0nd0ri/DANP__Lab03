@@ -1,5 +1,6 @@
 package com.luiscv.lab03
 
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,12 +10,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.w3c.dom.Text
+import androidx.versionedparcelable.VersionedParcelize
 
-private val asistentes: List<Asistente> = listOf(
+private var asistentes = mutableListOf(
     Asistente("Luis Condori", "01/06/2023", "B+",
         "987654321", "lcondorivill@unsa.edu.pe", 2000.0),
     Asistente("Julio Lopez", "01/06/2023", "B+",
@@ -31,11 +33,39 @@ private val asistentes: List<Asistente> = listOf(
         "987654321", "lcondorivill@unsa.edu.pe", 2000.0)
 )
 
+//val data = mutableStateListOf<List<String>>()
+
 @Composable
 fun Home(
     btnRegister: (String) -> Unit,
-    btnEdit: (String) -> Unit
+    btnEdit: (Int) -> Unit,
+    btnDelete: () -> Unit,
+    p1: String, //nombre
+    p2: String, //fecha
+    p3: String, //tipo
+    p4: String, //telefono
+    p5: String, //correo
+    p6: String, //monto
+    p7: Int,  //indice del asistente(editar)
+    insertRegister: MutableState<Boolean>, //para insertar el dato registrado
+    editRegister: MutableState<Boolean>
 ) {
+
+    //Todo: insert asistent
+    if (insertRegister.value){
+        asistentes += listOf(Asistente(p1, p2, p3, p4, p5, p6.toDouble()))
+        insertRegister.value = false
+    }
+
+    //Todo: edit asistent
+    //agregamos un valor por defecto porque todavia no se implemento el paso de parametros
+    //pero los PARAMETROS serian IGUAL que con REGISTER debido a que de momento no se encontro
+    //el modo de pasar objetos
+    if (editRegister.value){
+        asistentes[p7] = Asistente(
+            "Alejandro", "1", "1", "1", "1", 100.0)
+        editRegister.value = false
+    }
 
     val scrollState = rememberScrollState()
 
@@ -51,7 +81,7 @@ fun Home(
         //val scrollState = rememberScrollState()
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             //aqui van los items
-            MyAsistents(btnEdit, asistentes)
+            MyAsistents(btnEdit, asistentes, btnDelete)
         }
 
         Button(
@@ -72,17 +102,9 @@ data class Asistente(val nombre: String, val fInscripcion: String,
                      val correo: String, val montoPagado: Double)
 
 @Composable
-fun ItemAsistente(btnEdit: (String) -> Unit, asistente: Asistente, count: Int){
+fun ItemAsistente(btnEdit: (Int) -> Unit, asistente: Asistente, btnDelete: () -> Unit){
 
-    /*
-    var t1 = Text(text = "")
-    var t2 = Text(text = "")
-    var t3 = Text(text = "")
-    var t4 = Text(text = "")
-    var t5 = Text(text = "")
-    var t6= Text(text = "")
-*/
-
+    //Seria recomendable agregar Cards, pero como es un proyecto semilla se entiende
     Row() {
         Column() {
             Column(
@@ -90,6 +112,7 @@ fun ItemAsistente(btnEdit: (String) -> Unit, asistente: Asistente, count: Int){
                     .padding(start = 10.dp)
                     .background(Color.LightGray)
                     .padding(all = 10.dp)
+                    .width(240.dp)
             ) {
                 Text(text = "Nombres: "+ asistente.nombre)
                 Text(text = "Fecha de inscripcion: "+ asistente.fInscripcion)
@@ -103,16 +126,21 @@ fun ItemAsistente(btnEdit: (String) -> Unit, asistente: Asistente, count: Int){
         }
 
         Column(modifier = Modifier.padding(top = 20.dp)) {
-            Button(onClick = { btnEdit("") },
-                    modifier = Modifier.fillMaxWidth()
+            Button(onClick = {
+                        //todo : esperar
+                        btnEdit(asistentes.indexOf(asistente))
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
             ) {
                 Text(text = "Edit")
             }
 
             Button(onClick = {
-                        asistentes.drop(count)
+                        //todo : esperar
+                        asistentes.remove(asistente)
+                        btnDelete()
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
             ) {
                 Text(text = "Delete")
             }
@@ -123,24 +151,15 @@ fun ItemAsistente(btnEdit: (String) -> Unit, asistente: Asistente, count: Int){
 
 }
 
-@Composable
-fun MyAsistents(btnEdit: (String) -> Unit, asistentes: List<Asistente>){
 
-    var count = 0
+@Composable
+fun MyAsistents(btnEdit: (Int) -> Unit, asistentes: List<Asistente>, btnDelete: () -> Unit){
+
     LazyColumn(
         modifier = Modifier.height(500.dp)  //muy importante
     ) {
         items(asistentes){ asistente ->
-            ItemAsistente(btnEdit,asistente, count)
-            count = count + 1;
+            ItemAsistente(btnEdit,asistente, btnDelete)
         }
     }
 }
-/*
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    Lab03Theme {
-        Home()
-    }
-}*/
